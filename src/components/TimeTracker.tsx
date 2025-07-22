@@ -129,40 +129,43 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onTimeLogged }) => {
   };
 
   return (
-    <div className="h-full flex flex-col animate-fade-up">
-      {/* Info Bar */}
-      <div className="surface rounded-2xl p-6 mb-6" style={{ background: 'var(--gradient-primary)' }}>
-        <div className="flex items-center justify-between text-white">
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6" />
-            <div>
-              <h2 className="text-lg font-semibold">Time Tracker</h2>
-              <p className="text-purple-100 text-sm">{getCurrentDateTime()}</p>
+    <div className="h-full flex flex-col lg:flex-row gap-8 animate-fade-up">
+      {/* Left Column - Project Selection */}
+      <div className="lg:w-1/2 space-y-6">
+
+        {/* Info Bar */}
+        <div className="surface rounded-2xl p-6 mb-6" style={{ background: 'var(--gradient-primary)' }}>
+          <div className="flex items-center justify-between text-white">
+            <div className="flex items-center gap-3">
+              <Clock className="w-6 h-6" />
+              <div>
+                <h2 className="text-lg font-semibold">Time Tracker</h2>
+                <p className="text-purple-100 text-sm">{getCurrentDateTime()}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold">{formatTime(time)}</div>
+              {isRunning && (
+                <div className="text-purple-200 text-sm">
+                  {isPaused ? 'Paused' : 'Running'}
+                </div>
+              )}
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold">{formatTime(time)}</div>
-            {isRunning && (
-              <div className="text-purple-200 text-sm">
-                {isPaused ? 'Paused' : 'Running'}
-              </div>
-            )}
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Input
+              placeholder="Search projects or tasks"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-12 h-14 bg-white/80 backdrop-blur-lg border-white/20 rounded-2xl text-lg"
+            />
           </div>
         </div>
-      </div>
-
-      {/* Search Bar */}
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-          <Input
-            placeholder="Search projects or tasks"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 h-14 bg-white/80 backdrop-blur-lg border-white/20 rounded-2xl text-lg"
-          />
-        </div>
-      </div>
 
       {/* Quick Start / Frequently Used Tabs */}
       <div className="mb-6">
@@ -192,7 +195,7 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onTimeLogged }) => {
         </div>
 
         {/* Project List */}
-        <div className="space-y-3 max-h-64 overflow-y-auto">
+        <div className="space-y-3 max-h-[400px] overflow-y-auto">
           {filteredProjects.map((project) => (
             <Card 
               key={project.id} 
@@ -234,33 +237,50 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onTimeLogged }) => {
           ))}
         </div>
       </div>
+      </div>
 
-      {/* Timer Controls */}
-      <div className="mt-auto">
-        <Card className="p-8 bg-white/80 backdrop-blur-lg">
+      {/* Right Column - Timer Controls */}
+      <div className="lg:w-1/2 lg:pl-8">
+
+        {/* Timer Display */}
+        <Card className="p-8 bg-white/80 backdrop-blur-lg mb-6">
           <div className="text-center">
-            <div className="text-6xl font-mono font-bold text-slate-700 mb-8 tracking-wider">
+            <div className="text-8xl font-mono font-bold text-slate-700 mb-6 tracking-wider">
               {formatTime(time)}
             </div>
-            
+            {isRunning && (
+              <div className="text-lg text-slate-500 mb-4">
+                {isPaused ? (
+                  <span className="text-orange-600 font-medium">⏸ Paused</span>
+                ) : (
+                  <span className="text-green-600 font-medium">▶ Running</span>
+                )}
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Timer Controls */}
+        <Card className="p-8 bg-white/80 backdrop-blur-lg">
+          <div className="text-center">
             {!isRunning ? (
               <Button
                 onClick={handleStart}
                 size="lg"
-                className="h-16 px-12 text-lg rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="h-20 px-16 text-xl rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300"
                 disabled={!selectedProject || !selectedSubproject}
               >
-                <Play className="w-6 h-6 mr-2" />
-                Start
+                <Play className="w-8 h-8 mr-3" />
+                Start Timer
               </Button>
             ) : (
-              <div className="flex gap-4 justify-center">
+              <div className="flex gap-6 justify-center">
                 {!isPaused ? (
                   <Button
                     onClick={handlePause}
                     variant="outline"
                     size="lg"
-                    className="h-16 px-8 text-lg rounded-2xl border-2 hover:bg-orange-50 hover:border-orange-200"
+                    className="h-16 px-10 text-lg rounded-2xl border-2 hover:bg-orange-50 hover:border-orange-200"
                   >
                     <Pause className="w-6 h-6 mr-2" />
                     Pause
@@ -269,7 +289,7 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onTimeLogged }) => {
                   <Button
                     onClick={handleResume}
                     size="lg"
-                    className="h-16 px-8 text-lg rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg"
+                    className="h-16 px-10 text-lg rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg"
                   >
                     <Play className="w-6 h-6 mr-2" />
                     Resume
@@ -280,7 +300,7 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onTimeLogged }) => {
                   onClick={handleStop}
                   variant="destructive"
                   size="lg"
-                  className="h-16 px-8 text-lg rounded-2xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg"
+                  className="h-16 px-10 text-lg rounded-2xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg"
                 >
                   <Square className="w-6 h-6 mr-2" />
                   Stop

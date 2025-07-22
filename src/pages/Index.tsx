@@ -3,7 +3,7 @@ import TimeTracker from '@/components/TimeTracker';
 import Timesheet from '@/components/Timesheet';
 import MyTasks from '@/components/MyTasks';
 import Holidays from '@/components/Holidays';
-import BottomNavigation from '@/components/BottomNavigation';
+import TopNavigation from '@/components/TopNavigation';
 
 interface TimeEntry {
   id: string;
@@ -40,19 +40,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen pb-24">
-      <div className="max-w-md mx-auto h-screen">
-        <div className="h-full p-4 pt-8">
+    <div className="min-h-screen w-full bg-slate-50">
+      <TopNavigation 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+      />
+      
+      <div className="w-full">
+        <div className="max-w-7xl mx-auto px-6 py-8 min-h-[calc(100vh-80px)]">
           <div className="tab-content">
             {renderActiveTab()}
           </div>
         </div>
       </div>
-      
-      <BottomNavigation 
-        activeTab={activeTab} 
-        onTabChange={setActiveTab} 
-      />
     </div>
   );
 };

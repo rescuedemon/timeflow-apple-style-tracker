@@ -105,51 +105,52 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
   };
 
   return (
-    <div className="h-full flex flex-col animate-fade-up">
-      {/* Progress Bar Section */}
-      <Card className="p-6 mb-6 bg-white/80 backdrop-blur-lg">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <BarChart3 className="w-6 h-6 text-primary" />
-            <div>
-              <h3 className="text-lg font-semibold text-slate-700">Daily Progress</h3>
-              <p className="text-sm text-slate-500">Target: 8 hours</p>
+    <div className="h-full flex flex-col lg:flex-row gap-8 animate-fade-up">
+      {/* Left Column - Progress & Controls */}
+      <div className="lg:w-1/3 space-y-6">
+        {/* Progress Bar Section */}
+        <Card className="p-6 bg-white/80 backdrop-blur-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <BarChart3 className="w-6 h-6 text-primary" />
+              <div>
+                <h3 className="text-lg font-semibold text-slate-700">Daily Progress</h3>
+                <p className="text-sm text-slate-500">Target: 8 hours</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-slate-700">
+                {totalHours.toFixed(1)} / 8.0 hours
+              </div>
+              <div className="text-sm text-slate-500">
+                {progressPercentage.toFixed(0)}% complete
+              </div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-slate-700">
-              {totalHours.toFixed(1)} / 8.0 hours
-            </div>
-            <div className="text-sm text-slate-500">
-              {progressPercentage.toFixed(0)}% complete
-            </div>
+          
+          <div className="relative">
+            <Progress 
+              value={progressPercentage} 
+              className="h-4 bg-slate-200"
+            />
+            <div 
+              className="absolute top-0 left-0 h-4 rounded-lg progress-fill"
+              style={{ 
+                width: `${progressPercentage}%`,
+                background: progressPercentage >= 100 
+                  ? 'linear-gradient(90deg, #10B981, #059669)' 
+                  : 'var(--gradient-primary)'
+              }}
+            />
           </div>
-        </div>
-        
-        <div className="relative">
-          <Progress 
-            value={progressPercentage} 
-            className="h-4 bg-slate-200"
-          />
-          <div 
-            className="absolute top-0 left-0 h-4 rounded-lg progress-fill"
-            style={{ 
-              width: `${progressPercentage}%`,
-              background: progressPercentage >= 100 
-                ? 'linear-gradient(90deg, #10B981, #059669)' 
-                : 'var(--gradient-primary)'
-            }}
-          />
-        </div>
-      </Card>
+        </Card>
 
-      {/* View Toggle */}
-      <div className="flex justify-between items-center mb-6">
+        {/* View Toggle */}
         <div className="flex bg-white/50 backdrop-blur-lg rounded-2xl p-2">
           <Button
             variant={viewMode === 'daily' ? 'default' : 'ghost'}
             onClick={() => setViewMode('daily')}
-            className={`rounded-xl transition-all duration-300 ${
+            className={`flex-1 rounded-xl transition-all duration-300 ${
               viewMode === 'daily' 
                 ? 'bg-white shadow-lg text-primary' 
                 : 'text-slate-600 hover:bg-white/50'
@@ -161,7 +162,7 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
           <Button
             variant={viewMode === 'weekly' ? 'default' : 'ghost'}
             onClick={() => setViewMode('weekly')}
-            className={`rounded-xl transition-all duration-300 ${
+            className={`flex-1 rounded-xl transition-all duration-300 ${
               viewMode === 'weekly' 
                 ? 'bg-white shadow-lg text-primary' 
                 : 'text-slate-600 hover:bg-white/50'
@@ -171,43 +172,51 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
             Weekly View
           </Button>
         </div>
-
-        {/* Date Navigation */}
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigateDate('prev')}
-            className="w-10 h-10 rounded-xl bg-white/70 hover:bg-white/90"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          
-          <div className="text-center min-w-[200px]">
-            <div className="font-semibold text-slate-700">
-              {viewMode === 'daily' ? formatDate(currentDate) : 
-               `Week of ${formatDate(new Date(currentDate.getTime() - currentDate.getDay() * 24 * 60 * 60 * 1000))}`}
-            </div>
-            {isToday(currentDate) && viewMode === 'daily' && (
-              <Badge variant="secondary" className="mt-1 bg-emerald-100 text-emerald-700">
-                Today
-              </Badge>
-            )}
-          </div>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigateDate('next')}
-            className="w-10 h-10 rounded-xl bg-white/70 hover:bg-white/90"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
       </div>
 
-      {/* Time Entries Table */}
-      <Card className="flex-1 p-6 bg-white/80 backdrop-blur-lg overflow-hidden">
+      {/* Right Column - Time Entries */}
+      <div className="lg:w-2/3">
+        {/* Date Navigation */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-slate-700">
+            {viewMode === 'daily' ? 'Daily Timesheet' : 'Weekly Summary'}
+          </h2>
+          
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigateDate('prev')}
+              className="w-10 h-10 rounded-xl bg-white/70 hover:bg-white/90"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            
+            <div className="text-center min-w-[200px]">
+              <div className="font-semibold text-slate-700">
+                {viewMode === 'daily' ? formatDate(currentDate) : 
+                 `Week of ${formatDate(new Date(currentDate.getTime() - currentDate.getDay() * 24 * 60 * 60 * 1000))}`}
+              </div>
+              {isToday(currentDate) && viewMode === 'daily' && (
+                <Badge variant="secondary" className="mt-1 bg-emerald-100 text-emerald-700">
+                  Today
+                </Badge>
+              )}
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigateDate('next')}
+              className="w-10 h-10 rounded-xl bg-white/70 hover:bg-white/90"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Time Entries Table */}
+        <Card className="flex-1 p-6 bg-white/80 backdrop-blur-lg overflow-hidden">
         <div className="h-full overflow-y-auto">
           {viewMode === 'daily' ? (
             <div className="space-y-3">
@@ -268,7 +277,8 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
             </div>
           )}
         </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };

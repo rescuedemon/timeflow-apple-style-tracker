@@ -112,75 +112,79 @@ const MyTasks: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col animate-fade-up space-y-6">
-      {/* Current Task */}
-      {currentTask && (
-        <Card className="p-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-200/50 backdrop-blur-lg">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse-glow"></div>
-              <h3 className="text-lg font-semibold text-slate-700">Current Task</h3>
-            </div>
-            <Badge variant="outline" className={getPriorityColor(currentTask.priority)}>
-              {getPriorityIcon(currentTask.priority)}
-              <span className="ml-1 capitalize">{currentTask.priority}</span>
-            </Badge>
-          </div>
-          
-          <div className="space-y-3">
-            <h4 className="text-xl font-semibold text-slate-800">{currentTask.title}</h4>
-            <p className="text-slate-600">{currentTask.description}</p>
-            
-            <div className="flex items-center gap-4 text-sm">
-              <Badge variant="secondary" className="bg-white/50">
-                {currentTask.project}
+    <div className="h-full flex flex-col lg:flex-row gap-8 animate-fade-up">
+      {/* Left Column - Current Task */}
+      <div className="lg:w-1/3 space-y-6">
+        {currentTask && (
+          <Card className="p-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-200/50 backdrop-blur-lg">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse-glow"></div>
+                <h3 className="text-lg font-semibold text-slate-700">Current Task</h3>
+              </div>
+              <Badge variant="outline" className={getPriorityColor(currentTask.priority)}>
+                {getPriorityIcon(currentTask.priority)}
+                <span className="ml-1 capitalize">{currentTask.priority}</span>
               </Badge>
-              {currentTask.estimatedTime && (
-                <div className="flex items-center gap-1 text-slate-500">
-                  <Clock className="w-4 h-4" />
-                  <span>{currentTask.estimatedTime}</span>
-                </div>
-              )}
-              {currentTask.dueDate && (
-                <div className={`flex items-center gap-1 ${
-                  isOverdue(currentTask.dueDate) ? 'text-red-600' : 'text-slate-500'
-                }`}>
-                  <span>Due {formatDate(currentTask.dueDate)}</span>
-                </div>
-              )}
             </div>
+            
+            <div className="space-y-3">
+              <h4 className="text-xl font-semibold text-slate-800">{currentTask.title}</h4>
+              <p className="text-slate-600">{currentTask.description}</p>
+              
+              <div className="flex items-center gap-4 text-sm">
+                <Badge variant="secondary" className="bg-white/50">
+                  {currentTask.project}
+                </Badge>
+                {currentTask.estimatedTime && (
+                  <div className="flex items-center gap-1 text-slate-500">
+                    <Clock className="w-4 h-4" />
+                    <span>{currentTask.estimatedTime}</span>
+                  </div>
+                )}
+                {currentTask.dueDate && (
+                  <div className={`flex items-center gap-1 ${
+                    isOverdue(currentTask.dueDate) ? 'text-red-600' : 'text-slate-500'
+                  }`}>
+                    <span>Due {formatDate(currentTask.dueDate)}</span>
+                  </div>
+                )}
+              </div>
 
-            <div className="flex gap-3 pt-2">
-              <Button
-                onClick={() => toggleTaskStatus(currentTask.id)}
-                variant="default"
-                className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
-              >
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Mark Complete
-              </Button>
+              <div className="flex gap-3 pt-2">
+                <Button
+                  onClick={() => toggleTaskStatus(currentTask.id)}
+                  variant="default"
+                  className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Mark Complete
+                </Button>
+              </div>
             </div>
+          </Card>
+        )}
+      </div>
+
+      {/* Right Column - Task Lists */}
+      <div className="lg:w-2/3 space-y-6">
+        {/* Pending Tasks */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-semibold text-slate-700">
+              Pending Tasks ({pendingTasks.length})
+            </h3>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="rounded-xl bg-white/70 hover:bg-white/90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Task
+            </Button>
           </div>
-        </Card>
-      )}
 
-      {/* Pending Tasks */}
-      <div className="flex-1 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-slate-700">
-            Pending Tasks ({pendingTasks.length})
-          </h3>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="rounded-xl bg-white/70 hover:bg-white/90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Task
-          </Button>
-        </div>
-
-        <div className="space-y-3 max-h-96 overflow-y-auto">
+          <div className="space-y-3 max-h-96 overflow-y-auto">
           {pendingTasks.map((task) => (
             <Card key={task.id} className="p-4 hover-lift bg-white/80 backdrop-blur-lg">
               <div className="flex items-start gap-3">
@@ -231,11 +235,12 @@ const MyTasks: React.FC = () => {
               </div>
             </Card>
           ))}
+          </div>
         </div>
 
         {/* Completed Tasks */}
         {completedTasks.length > 0 && (
-          <div className="mt-8">
+          <div className="space-y-4">
             <h3 className="text-lg font-semibold text-slate-700 mb-4">
               Completed Tasks ({completedTasks.length})
             </h3>

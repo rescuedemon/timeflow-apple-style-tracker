@@ -121,7 +121,7 @@ const Holidays: React.FC = () => {
   const days = getDaysInMonth(currentDate);
 
   return (
-    <div className="h-full flex flex-col animate-fade-up">
+    <div className="h-full flex flex-col animate-fade-up max-w-5xl mx-auto">
       {/* Header */}
       <Card className="p-6 mb-6 bg-white/80 backdrop-blur-lg">
         <div className="flex items-center justify-between">
