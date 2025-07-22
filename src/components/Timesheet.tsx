@@ -105,80 +105,90 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
   };
 
   return (
-    <div className="h-full flex flex-col lg:flex-row gap-8 animate-fade-up">
-      {/* Left Column - Progress & Controls */}
-      <div className="lg:w-1/3 space-y-6">
-        {/* Progress Bar Section */}
-        <Card className="p-6 bg-white/80 backdrop-blur-lg">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <BarChart3 className="w-6 h-6 text-primary" />
-              <div>
-                <h3 className="text-lg font-semibold text-slate-700">Daily Progress</h3>
-                <p className="text-sm text-slate-500">Target: 8 hours</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Progress Bar - Full Width Same as Info Bar */}
+      <div className="w-full mb-8">
+        <div className="max-w-7xl mx-auto px-8">
+          <Card className="p-8 bg-white/80 backdrop-blur-xl border-0 shadow-xl rounded-3xl">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <BarChart3 className="w-8 h-8 text-purple-600" />
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-700 font-display">Daily Progress</h3>
+                  <p className="text-base text-slate-500 font-system">Target: 8 hours</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-slate-700 font-mono">
+                  {totalHours.toFixed(1)} / 8.0 hours
+                </div>
+                <div className="text-base text-slate-500 font-system">
+                  {progressPercentage.toFixed(0)}% complete
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-slate-700">
-                {totalHours.toFixed(1)} / 8.0 hours
-              </div>
-              <div className="text-sm text-slate-500">
-                {progressPercentage.toFixed(0)}% complete
-              </div>
+            
+            <div className="relative">
+              <Progress 
+                value={progressPercentage} 
+                className="h-6 bg-slate-200"
+              />
+              <div 
+                className="absolute top-0 left-0 h-6 rounded-lg progress-fill"
+                style={{ 
+                  width: `${progressPercentage}%`,
+                  background: progressPercentage >= 100 
+                    ? 'linear-gradient(90deg, #10B981, #059669)' 
+                    : 'linear-gradient(90deg, #8B5CF6, #7C3AED)'
+                }}
+              />
             </div>
-          </div>
-          
-          <div className="relative">
-            <Progress 
-              value={progressPercentage} 
-              className="h-4 bg-slate-200"
-            />
-            <div 
-              className="absolute top-0 left-0 h-4 rounded-lg progress-fill"
-              style={{ 
-                width: `${progressPercentage}%`,
-                background: progressPercentage >= 100 
-                  ? 'linear-gradient(90deg, #10B981, #059669)' 
-                  : 'var(--gradient-primary)'
-              }}
-            />
-          </div>
-        </Card>
-
-        {/* View Toggle */}
-        <div className="flex bg-white/50 backdrop-blur-lg rounded-2xl p-2">
-          <Button
-            variant={viewMode === 'daily' ? 'default' : 'ghost'}
-            onClick={() => setViewMode('daily')}
-            className={`flex-1 rounded-xl transition-all duration-300 ${
-              viewMode === 'daily' 
-                ? 'bg-white shadow-lg text-primary' 
-                : 'text-slate-600 hover:bg-white/50'
-            }`}
-          >
-            <Calendar className="w-4 h-4 mr-2" />
-            Daily View
-          </Button>
-          <Button
-            variant={viewMode === 'weekly' ? 'default' : 'ghost'}
-            onClick={() => setViewMode('weekly')}
-            className={`flex-1 rounded-xl transition-all duration-300 ${
-              viewMode === 'weekly' 
-                ? 'bg-white shadow-lg text-primary' 
-                : 'text-slate-600 hover:bg-white/50'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Weekly View
-          </Button>
+          </Card>
         </div>
       </div>
 
-      {/* Right Column - Time Entries */}
-      <div className="lg:w-2/3">
+      {/* Main Content */}
+      <div className="w-full">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="flex gap-8">
+            {/* Left Column - View Toggle */}
+            <div className="flex-1">
+              <Card className="p-8 bg-white/80 backdrop-blur-xl border-0 shadow-xl rounded-3xl">
+                <div className="flex bg-slate-100/80 rounded-2xl p-1 mb-8">
+                  <Button
+                    variant={viewMode === 'daily' ? 'default' : 'ghost'}
+                    onClick={() => setViewMode('daily')}
+                    className={`flex-1 rounded-xl font-medium font-system transition-all duration-300 ${
+                      viewMode === 'daily' 
+                        ? 'bg-white shadow-lg text-purple-600' 
+                        : 'text-slate-600 hover:bg-white/50'
+                    }`}
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Daily View
+                  </Button>
+                  <Button
+                    variant={viewMode === 'weekly' ? 'default' : 'ghost'}
+                    onClick={() => setViewMode('weekly')}
+                    className={`flex-1 rounded-xl font-medium font-system transition-all duration-300 ${
+                      viewMode === 'weekly' 
+                        ? 'bg-white shadow-lg text-purple-600' 
+                        : 'text-slate-600 hover:bg-white/50'
+                    }`}
+                  >
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Weekly View
+                  </Button>
+                </div>
+              </Card>
+            </div>
+
+            {/* Right Column - Time Entries */}
+            <div className="flex-1">
+              <Card className="p-8 bg-white/80 backdrop-blur-xl border-0 shadow-xl rounded-3xl">
         {/* Date Navigation */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-slate-700">
+          <h2 className="text-2xl font-bold text-slate-700 font-display">
             {viewMode === 'daily' ? 'Daily Timesheet' : 'Weekly Summary'}
           </h2>
           
@@ -187,18 +197,18 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
               variant="outline"
               size="sm"
               onClick={() => navigateDate('prev')}
-              className="w-10 h-10 rounded-xl bg-white/70 hover:bg-white/90"
+              className="w-10 h-10 rounded-xl bg-white/70 hover:bg-white/90 font-system"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
             
             <div className="text-center min-w-[200px]">
-              <div className="font-semibold text-slate-700">
+              <div className="font-semibold text-slate-700 font-system">
                 {viewMode === 'daily' ? formatDate(currentDate) : 
                  `Week of ${formatDate(new Date(currentDate.getTime() - currentDate.getDay() * 24 * 60 * 60 * 1000))}`}
               </div>
               {isToday(currentDate) && viewMode === 'daily' && (
-                <Badge variant="secondary" className="mt-1 bg-emerald-100 text-emerald-700">
+                <Badge variant="secondary" className="mt-1 bg-emerald-100 text-emerald-700 font-system">
                   Today
                 </Badge>
               )}
@@ -208,7 +218,7 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
               variant="outline"
               size="sm"
               onClick={() => navigateDate('next')}
-              className="w-10 h-10 rounded-xl bg-white/70 hover:bg-white/90"
+              className="w-10 h-10 rounded-xl bg-white/70 hover:bg-white/90 font-system"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
@@ -216,8 +226,7 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
         </div>
 
         {/* Time Entries Table */}
-        <Card className="flex-1 p-6 bg-white/80 backdrop-blur-lg overflow-hidden">
-        <div className="h-full overflow-y-auto">
+        <div className="overflow-y-auto max-h-96">
           {viewMode === 'daily' ? (
             <div className="space-y-3">
               {getDayEntries().length === 0 ? (
@@ -228,7 +237,7 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
                 </div>
               ) : (
                 getDayEntries().map((entry) => (
-                  <Card key={entry.id} className="p-4 hover-lift bg-white/70">
+                  <Card key={entry.id} className="p-4 hover-lift bg-white/70 rounded-2xl">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
@@ -239,12 +248,12 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
                             {entry.subproject}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-slate-600">
-                          <span>{entry.startTime} - {entry.endTime}</span>
-                          <span className="font-semibold text-primary">{entry.totalTime}</span>
+                        <div className="flex items-center gap-4 text-sm text-slate-600 font-system">
+                          <span className="font-mono">{entry.startTime} - {entry.endTime}</span>
+                          <span className="font-semibold text-purple-600 font-mono">{entry.totalTime}</span>
                         </div>
                         {entry.description && (
-                          <p className="text-sm text-slate-500 mt-2">{entry.description}</p>
+                          <p className="text-sm text-slate-500 mt-2 font-system">{entry.description}</p>
                         )}
                       </div>
                     </div>
@@ -262,12 +271,12 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
                 </div>
               ) : (
                 aggregateWeeklyData().map((item, index) => (
-                  <Card key={index} className="p-4 hover-lift bg-white/70">
+                  <Card key={index} className="p-4 hover-lift bg-white/70 rounded-2xl">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-slate-700 mb-1">{item.project}</h4>
-                        <div className="text-sm text-slate-600">
-                          <span className="font-semibold text-primary">{item.totalTime}</span>
+                        <h4 className="font-semibold text-slate-700 mb-1 font-display">{item.project}</h4>
+                        <div className="text-sm text-slate-600 font-system">
+                          <span className="font-semibold text-purple-600 font-mono">{item.totalTime}</span>
                         </div>
                       </div>
                     </div>
@@ -277,7 +286,10 @@ const Timesheet: React.FC<TimesheetProps> = ({ timeEntries }) => {
             </div>
           )}
         </div>
-        </Card>
+              </Card>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
