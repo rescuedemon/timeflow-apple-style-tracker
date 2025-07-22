@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Play, Pause, Square, Search } from 'lucide-react';
+import { Clock, Play, Pause, Square, Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -23,27 +23,21 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onTimeLogged }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedSubproject, setSelectedSubproject] = useState<string>('');
   const [startTime, setStartTime] = useState<Date | null>(null);
-  const [activeTab, setActiveTab] = useState<'quick' | 'frequent'>('quick');
+  const [activeTab, setActiveTab] = useState<'quick' | 'frequent'>('frequent');
   const [searchQuery, setSearchQuery] = useState('');
 
   const projects: Project[] = [
     {
       id: '1',
-      name: 'Frontend Development',
-      subprojects: ['React Components', 'API Integration', 'UI Polish'],
-      category: 'Development'
-    },
-    {
-      id: '2',
-      name: 'Design System',
-      subprojects: ['Component Library', 'Style Guide', 'Documentation'],
+      name: 'Design',
+      subprojects: ['UI/UX Design', 'Prototyping', 'Research'],
       category: 'Design'
     },
     {
-      id: '3',
-      name: 'User Research',
-      subprojects: ['Interviews', 'Surveys', 'Analysis'],
-      category: 'Research'
+      id: '2',
+      name: 'Development',
+      subprojects: ['Frontend', 'Backend', 'Testing'],
+      category: 'Development'
     }
   ];
 
@@ -120,195 +114,227 @@ const TimeTracker: React.FC<TimeTrackerProps> = ({ onTimeLogged }) => {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZoneName: 'short'
+      day: 'numeric'
     };
     return now.toLocaleDateString('en-US', options);
   };
 
-  return (
-    <div className="h-full flex flex-col lg:flex-row gap-8 animate-fade-up">
-      {/* Left Column - Project Selection */}
-      <div className="lg:w-1/2 space-y-6">
+  const getTimeZoneTime = (timezone: string) => {
+    const now = new Date();
+    return now.toLocaleTimeString('en-US', {
+      timeZone: timezone,
+      hour12: true,
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
-        {/* Info Bar */}
-        <div className="surface rounded-2xl p-6 mb-6" style={{ background: 'var(--gradient-primary)' }}>
-          <div className="flex items-center justify-between text-white">
-            <div className="flex items-center gap-3">
-              <Clock className="w-6 h-6" />
-              <div>
-                <h2 className="text-lg font-semibold">Time Tracker</h2>
-                <p className="text-purple-100 text-sm">{getCurrentDateTime()}</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Header with Date and World Clocks */}
+      <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-8 rounded-3xl mx-6 mt-6 shadow-2xl">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold mb-2">{getCurrentDateTime()}</h1>
+          </div>
+          
+          <div className="flex gap-8">
+            {/* India Time */}
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full border-2 border-white/30 flex items-center justify-center mb-2 mx-auto">
+                <Clock className="w-8 h-8" />
+              </div>
+              <div className="flex items-center gap-1 text-sm opacity-90 mb-1">
+                <MapPin className="w-3 h-3" />
+                <span>India</span>
+              </div>
+              <div className="text-lg font-semibold">{getTimeZoneTime('Asia/Kolkata')}</div>
+            </div>
+
+            {/* UK Time */}
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full border-2 border-white/30 flex items-center justify-center mb-2 mx-auto">
+                <Clock className="w-8 h-8" />
+              </div>
+              <div className="flex items-center gap-1 text-sm opacity-90 mb-1">
+                <MapPin className="w-3 h-3" />
+                <span>UK</span>
+              </div>
+              <div className="text-lg font-semibold">{getTimeZoneTime('Europe/London')}</div>
+            </div>
+
+            {/* USA Time */}
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full border-2 border-white/30 flex items-center justify-center mb-2 mx-auto">
+                <Clock className="w-8 h-8" />
+              </div>
+              <div className="flex items-center gap-1 text-sm opacity-90 mb-1">
+                <MapPin className="w-3 h-3" />
+                <span>USA</span>
+              </div>
+              <div className="text-lg font-semibold">{getTimeZoneTime('America/New_York')}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-8 p-6">
+        {/* Left Panel - Project Selection */}
+        <div className="flex-1 max-w-md">
+          <Card className="p-6 bg-white/80 backdrop-blur-xl border-0 shadow-xl rounded-3xl">
+            {/* Search Bar */}
+            <div className="mb-6">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Input
+                  placeholder="Search projects..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-12 bg-slate-50/50 border-0 rounded-2xl text-base font-medium"
+                />
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold">{formatTime(time)}</div>
+
+            {/* Tab Navigation */}
+            <div className="flex bg-slate-100/80 rounded-2xl p-1 mb-6">
+              <Button
+                variant={activeTab === 'frequent' ? 'default' : 'ghost'}
+                onClick={() => setActiveTab('frequent')}
+                className={`flex-1 rounded-xl font-medium transition-all duration-300 ${
+                  activeTab === 'frequent' 
+                    ? 'bg-white shadow-lg text-purple-600' 
+                    : 'text-slate-600 hover:bg-white/50'
+                }`}
+              >
+                Frequently Used
+              </Button>
+              <Button
+                variant={activeTab === 'quick' ? 'default' : 'ghost'}
+                onClick={() => setActiveTab('quick')}
+                className={`flex-1 rounded-xl font-medium transition-all duration-300 ${
+                  activeTab === 'quick' 
+                    ? 'bg-white shadow-lg text-purple-600' 
+                    : 'text-slate-600 hover:bg-white/50'
+                }`}
+              >
+                Quick Start
+              </Button>
+            </div>
+
+            {/* Project Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {filteredProjects.map((project) => (
+                <Card 
+                  key={project.id} 
+                  className={`p-6 cursor-pointer transition-all duration-300 border-0 rounded-2xl ${
+                    selectedProject?.id === project.id 
+                      ? 'bg-purple-50 ring-2 ring-purple-200 shadow-lg' 
+                      : 'bg-slate-50/50 hover:bg-white hover:shadow-lg'
+                  }`}
+                  onClick={() => setSelectedProject(project)}
+                >
+                  <div className="text-center">
+                    <h3 className="font-bold text-lg text-slate-800 mb-4">{project.name}</h3>
+                    <div className="space-y-2">
+                      {project.subprojects.map((sub, index) => (
+                        <Badge 
+                          key={index}
+                          variant={selectedSubproject === sub ? "default" : "secondary"}
+                          className={`cursor-pointer transition-all duration-200 text-xs px-3 py-1 ${
+                            selectedSubproject === sub 
+                              ? 'bg-purple-600 text-white shadow-md' 
+                              : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedSubproject(sub);
+                          }}
+                        >
+                          {sub}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </Card>
+        </div>
+
+        {/* Right Panel - Timer */}
+        <div className="flex-1 max-w-lg">
+          <Card className="p-8 bg-white/80 backdrop-blur-xl border-0 shadow-xl rounded-3xl h-full flex flex-col justify-center">
+            {/* Timer Display */}
+            <div className="text-center mb-12">
+              <div className="text-8xl font-mono font-bold text-purple-600 mb-6 tracking-wider">
+                {formatTime(time)}
+              </div>
               {isRunning && (
-                <div className="text-purple-200 text-sm">
-                  {isPaused ? 'Paused' : 'Running'}
+                <div className="text-lg text-slate-500 mb-4">
+                  {isPaused ? (
+                    <span className="text-orange-600 font-medium flex items-center justify-center gap-2">
+                      <Pause className="w-5 h-5" />
+                      Paused
+                    </span>
+                  ) : (
+                    <span className="text-green-600 font-medium flex items-center justify-center gap-2">
+                      <Play className="w-5 h-5" />
+                      Running
+                    </span>
+                  )}
                 </div>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <Input
-              placeholder="Search projects or tasks"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-14 bg-white/80 backdrop-blur-lg border-white/20 rounded-2xl text-lg"
-            />
-          </div>
-        </div>
-
-      {/* Quick Start / Frequently Used Tabs */}
-      <div className="mb-6">
-        <div className="flex bg-white/50 backdrop-blur-lg rounded-2xl p-2 mb-4">
-          <Button
-            variant={activeTab === 'quick' ? 'default' : 'ghost'}
-            onClick={() => setActiveTab('quick')}
-            className={`flex-1 rounded-xl transition-all duration-300 ${
-              activeTab === 'quick' 
-                ? 'bg-white shadow-lg text-primary' 
-                : 'text-slate-600 hover:bg-white/50'
-            }`}
-          >
-            Quick Start
-          </Button>
-          <Button
-            variant={activeTab === 'frequent' ? 'default' : 'ghost'}
-            onClick={() => setActiveTab('frequent')}
-            className={`flex-1 rounded-xl transition-all duration-300 ${
-              activeTab === 'frequent' 
-                ? 'bg-white shadow-lg text-primary' 
-                : 'text-slate-600 hover:bg-white/50'
-            }`}
-          >
-            Frequently Used
-          </Button>
-        </div>
-
-        {/* Project List */}
-        <div className="space-y-3 max-h-[400px] overflow-y-auto">
-          {filteredProjects.map((project) => (
-            <Card 
-              key={project.id} 
-              className={`p-4 cursor-pointer transition-all duration-300 hover-lift ${
-                selectedProject?.id === project.id 
-                  ? 'ring-2 ring-primary bg-primary/5' 
-                  : 'bg-white/70 backdrop-blur-lg hover:bg-white/90'
-              }`}
-              onClick={() => setSelectedProject(project)}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-slate-700">{project.name}</h3>
-                  <div className="flex gap-2 mt-2">
-                    {project.subprojects.map((sub, index) => (
-                      <Badge 
-                        key={index}
-                        variant={selectedSubproject === sub ? "default" : "secondary"}
-                        className={`cursor-pointer transition-all duration-200 ${
-                          selectedSubproject === sub 
-                            ? 'bg-primary text-white' 
-                            : 'hover:bg-slate-200'
-                        }`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedSubproject(sub);
-                        }}
-                      >
-                        {sub}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <Badge variant="outline" className="bg-white/50">
-                  {project.category}
-                </Badge>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-      </div>
-
-      {/* Right Column - Timer Controls */}
-      <div className="lg:w-1/2 lg:pl-8">
-
-        {/* Timer Display */}
-        <Card className="p-8 bg-white/80 backdrop-blur-lg mb-6">
-          <div className="text-center">
-            <div className="text-8xl font-mono font-bold text-slate-700 mb-6 tracking-wider">
-              {formatTime(time)}
-            </div>
-            {isRunning && (
-              <div className="text-lg text-slate-500 mb-4">
-                {isPaused ? (
-                  <span className="text-orange-600 font-medium">⏸ Paused</span>
-                ) : (
-                  <span className="text-green-600 font-medium">▶ Running</span>
-                )}
-              </div>
-            )}
-          </div>
-        </Card>
-
-        {/* Timer Controls */}
-        <Card className="p-8 bg-white/80 backdrop-blur-lg">
-          <div className="text-center">
-            {!isRunning ? (
-              <Button
-                onClick={handleStart}
-                size="lg"
-                className="h-20 px-16 text-xl rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300"
-                disabled={!selectedProject || !selectedSubproject}
-              >
-                <Play className="w-8 h-8 mr-3" />
-                Start Timer
-              </Button>
-            ) : (
-              <div className="flex gap-6 justify-center">
-                {!isPaused ? (
+            {/* Timer Controls */}
+            <div className="flex justify-center gap-4">
+              {!isRunning ? (
+                <Button
+                  onClick={handleStart}
+                  size="lg"
+                  className="h-14 px-12 text-lg rounded-2xl bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-xl hover:shadow-2xl transition-all duration-300 font-semibold"
+                  disabled={!selectedProject || !selectedSubproject}
+                >
+                  <Play className="w-6 h-6 mr-3" />
+                  Start
+                </Button>
+              ) : (
+                <>
+                  {!isPaused ? (
+                    <Button
+                      onClick={handlePause}
+                      variant="outline"
+                      size="lg"
+                      className="h-14 px-8 text-lg rounded-2xl border-2 border-slate-300 hover:bg-slate-50 font-semibold"
+                    >
+                      <Pause className="w-6 h-6 mr-2" />
+                      Pause
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleResume}
+                      size="lg"
+                      className="h-14 px-8 text-lg rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-xl font-semibold"
+                    >
+                      <Play className="w-6 h-6 mr-2" />
+                      Resume
+                    </Button>
+                  )}
+                  
                   <Button
-                    onClick={handlePause}
+                    onClick={handleStop}
                     variant="outline"
                     size="lg"
-                    className="h-16 px-10 text-lg rounded-2xl border-2 hover:bg-orange-50 hover:border-orange-200"
+                    className="h-14 px-8 text-lg rounded-2xl border-2 border-slate-300 hover:bg-slate-50 font-semibold"
                   >
-                    <Pause className="w-6 h-6 mr-2" />
-                    Pause
+                    <Square className="w-6 h-6 mr-2" />
+                    Stop
                   </Button>
-                ) : (
-                  <Button
-                    onClick={handleResume}
-                    size="lg"
-                    className="h-16 px-10 text-lg rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg"
-                  >
-                    <Play className="w-6 h-6 mr-2" />
-                    Resume
-                  </Button>
-                )}
-                
-                <Button
-                  onClick={handleStop}
-                  variant="destructive"
-                  size="lg"
-                  className="h-16 px-10 text-lg rounded-2xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg"
-                >
-                  <Square className="w-6 h-6 mr-2" />
-                  Stop
-                </Button>
-              </div>
-            )}
-          </div>
-        </Card>
+                </>
+              )}
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );

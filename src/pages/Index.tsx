@@ -40,18 +40,16 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-slate-50">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-slate-100">
       <TopNavigation 
         activeTab={activeTab} 
         onTabChange={setActiveTab} 
       />
       
-      <div className="w-full">
-        <div className="max-w-7xl mx-auto px-6 py-8 min-h-[calc(100vh-80px)]">
+      <div className="w-full min-h-[calc(100vh-80px)]">
           <div className="tab-content">
             {renderActiveTab()}
           </div>
-        </div>
       </div>
     </div>
   );
